@@ -1,7 +1,3 @@
-#------------------------------------
-#- Restaurant bot instructions : ---- 
-#------------------------------------
-
 * Installation : 
 ----------------
 This entire bot was designed as described in this tutorial : 
