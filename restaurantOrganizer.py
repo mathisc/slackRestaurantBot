@@ -5,8 +5,8 @@ import json
 import random
 import sys
 
-MAX_GROUP_SIZE = 5     #Maximum group size, if participants > max group size, several groups will be created
-WAITING_TIME_MIN = 1    #Waiting time between question and answers : the time we let the users to answer the question
+MAX_GROUP_SIZE = 10     #Maximum group size, if participants > max group size, several groups will be created
+WAITING_TIME_MIN = 10    #Waiting time between question and answers : the time we let the users to answer the question
 
 #___ Check environment variables
 try :
@@ -36,7 +36,7 @@ AT_BOT = "<@" + BOT_ID + ">"
 
 #___ Functions
 def sendReservationMessage(channel):
-    response =  "<!" + channel +">"
+    response =  "<!channel>"
     response += "Up for some crazy restaurant? React to this post during the next " + str(WAITING_TIME_MIN) + " minutes and I'll handle (almost) everything."
     message = slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
     return message
@@ -62,7 +62,7 @@ def pickGroupResponsible(group):
 
 def sendFinalMessage(channel, groups):
     
-    txt =  "<!" + channel +">"
+    txt =  "<!channel>"
     txt += "Reservation are now closed !!! \n"
     if (len(groups) > 1) :
         txt += "In order to provide the best available restaurant experience " + str(len(groups)) + " groups have been randomly created \n"
