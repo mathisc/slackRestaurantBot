@@ -31,12 +31,13 @@ def get_botID():
 #___ Constants
 BOT_ID = get_botID()
 COMMAND_ORGANIZE = "organize"
-AT_BOT = "<@" + BOT_ID + ">"
+AT_BOT = "<@" + BOT_ID + "> "
+AT_CHAN = "<!channel> "
 
 
 #___ Functions
 def sendReservationMessage(channel):
-    response =  "<!channel>"
+    response = AT_CHAN
     response += "Up for some crazy restaurant? React to this post during the next " + str(WAITING_TIME_MIN) + " minutes and I'll handle (almost) everything."
     message = slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
     return message
@@ -62,7 +63,7 @@ def pickGroupResponsible(group):
 
 def sendFinalMessage(channel, groups):
     
-    txt =  "<!channel>"
+    txt = AT_CHAN
     txt += "Reservation are now closed !!! \n"
     if (len(groups) > 1) :
         txt += "In order to provide the best available restaurant experience " + str(len(groups)) + " groups have been randomly created \n"
