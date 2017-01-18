@@ -37,14 +37,12 @@ COMMAND_ORGANIZE = "organize"
 AT_BOT = "<@" + BOT_ID + "> "
 AT_CHAN = "<!channel> "
 
-
 #___ Functions
 def sendReservationMessage(channel):
     response = AT_CHAN
     response += "Up for some crazy restaurant? React to this post during the next " + str(WAITING_TIME_MIN) + " minutes and I'll handle (almost) everything."
     message = slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
     return message
-
 
 def formGroups(replies):
     nBins = (len(replies) / MAX_GROUP_SIZE) + 1
@@ -75,10 +73,10 @@ def sendFinalMessage(channel, groups):
         txt += "Groups #" + str(i+1) + " with " + str(len(groups[i]))+ " persons : \n"
         for k in range(len(groups[i])):
             txt += groups[i][k] + " \n"
-        txt +=  pickGroupResponsible(groups[i]) + " is in charge of booking the restaurant \n"
+        txt += "<@" + pickGroupResponsible(groups[i]) + "> is in charge of booking the restaurant!"
+        txt += random.choice(["May the Force be with you.", "Everybody's counting on you!", "HaHaHa screw you!", "Everybody's counting on you!", "I hope we are going to McDonald's", "Don't forget @restaurant-organizer, I'm hungry too!"])
 
     slack_client.api_call("chat.postMessage", channel=channel, text=txt, as_user=True)
-
 
 def organize_command(command, channel):
 
@@ -125,8 +123,6 @@ def organize_command(command, channel):
 
     sendFinalMessage(channel,groups)
 
-
-
 def handle_command(command, channel):
     """
         Receives commands directed at the bot and determines if they
@@ -157,6 +153,7 @@ def parse_slack_output(slack_rtm_output):
     return None, None
 
 
+#___ Main
 if __name__ == "__main__":
     #organize_command(None,None)
     READ_WEBSOCKET_DELAY = 1 # 1 second delay between reading from firehose
