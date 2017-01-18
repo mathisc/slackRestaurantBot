@@ -8,8 +8,8 @@ import json
 import random
 import sys
 
-MAX_GROUP_SIZE = 10     #Maximum group size, if participants > max group size, several groups will be created
-WAITING_TIME_MIN = 10    #Waiting time between question and answers : the time we let the users to answer the question
+MAX_GROUP_SIZE = 10      # Maximum group size, if participants > max group size, several groups will be created
+WAITING_TIME_MIN = 10    # Waiting time between question and answers : the time we let the users to answer the question
 
 #___ Check environment variables
 try :
@@ -48,29 +48,29 @@ def sendReservationMessage(channel):
 
 def formGroups(replies):
     nBins = (len(replies) / MAX_GROUP_SIZE) + 1
-    sizeBinsMin = len(replies)/nBins 
-    groups = [[] for i in xrange(nBins)] 
-    
-    for bin in range(nBins-1) : 
+    sizeBinsMin = len(replies)/nBins
+    groups = [[] for i in xrange(nBins)]
+
+    for bin in range(nBins-1) :
         for i in range(sizeBinsMin):
             userPicked = replies[random.randint(0, len(replies) - 1)]
             groups[bin].append(userPicked)
             replies.remove(userPicked)
-    
+
     groups[nBins-1] = replies
-    
+
     return groups
 
 def pickGroupResponsible(group):
     return group[random.randint(0, len(group) - 1)]
 
 def sendFinalMessage(channel, groups):
-    
+
     txt = AT_CHAN
     txt += "Reservation are now closed !!! \n"
     if (len(groups) > 1) :
         txt += "In order to provide the best available restaurant experience " + str(len(groups)) + " groups have been randomly created \n"
-    
+
     for i in range(len(groups)):
         txt += "Groups #" + str(i+1) + " with " + str(len(groups[i]))+ " persons : \n"
         for k in range(len(groups[i])):
@@ -81,19 +81,19 @@ def sendFinalMessage(channel, groups):
 
 
 def organize_command(command, channel):
-    
+
     messageInit = sendReservationMessage(channel)
-    
+
     time.sleep(WAITING_TIME_MIN*60)
-    
-    reactions = slack_client.api_call("reactions.get", 
+
+    reactions = slack_client.api_call("reactions.get",
                                       channel=channel,
                                       timestamp=messageInit['message']['ts'],
                                       as_user=True)
-    
+
     replies = []
     print reactions
-   
+
     if (len(reactions) == 0):
         return;
 
@@ -106,12 +106,12 @@ def organize_command(command, channel):
     for reaction in reactions['message']['reactions'] :
         for user in reaction['users'] :
             replies.append(user)
-    
+
     #Remove duplicates : if people reacted more than once to the poll
-    replies = list(set(replies))    
+    replies = list(set(replies))
     if (len(replies)==0):
         return
-   
+
     #Get Actual name
     for i in range(len(replies)):
         userInfo = slack_client.api_call("users.info", user=replies[i], as_user=True)
@@ -126,7 +126,7 @@ def organize_command(command, channel):
     sendFinalMessage(channel,groups)
 
 
-   
+
 def handle_command(command, channel):
     """
         Receives commands directed at the bot and determines if they
@@ -149,7 +149,7 @@ def parse_slack_output(slack_rtm_output):
     output_list = slack_rtm_output
     if output_list and len(output_list) > 0:
         for output in output_list:
-            if output and 'text' in output: 
+            if output and 'text' in output:
                 if AT_BOT in output['text']:
                     return output['text'].split(AT_BOT)[1].strip().lower(), \
                            output['channel']
@@ -166,7 +166,7 @@ if __name__ == "__main__":
             command, channel = parse_slack_output(slack_client.rtm_read())
             if command and channel:
                 handle_command(command, channel)
-            
+
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack token or bot ID?")
