@@ -73,7 +73,7 @@ def sendFinalMessage(channel, groups):
         txt += "Groups #" + str(i+1) + " with " + str(len(groups[i]))+ " persons : \n"
         for k in range(len(groups[i])):
             txt += groups[i][k] + " \n"
-        txt += "<@" + pickGroupResponsible(groups[i]) + "> is in charge of booking the restaurant!"
+        txt += "<@" + pickGroupResponsible(groups[i]) + "> is in charge of booking the restaurant! \n"
         txt += random.choice(["May the Force be with you.", "Everybody's counting on you!", "HaHaHa screw you!", "Everybody's counting on you!", "I hope we are going to McDonald's", "Don't forget @restaurant-organizer, I'm hungry too!"])
 
     slack_client.api_call("chat.postMessage", channel=channel, text=txt, as_user=True)
