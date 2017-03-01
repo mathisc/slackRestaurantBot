@@ -15,7 +15,7 @@ WAITING_TIME_MIN = 10    # Waiting time between question and answers : the time 
 try :
     os.environ['SLACK_BOT_TOKEN']
 except KeyError:
-    print "SLACK_BOT_TOKEN is undefined"
+    print("SLACK_BOT_TOKEN is undefined")
     sys.exit(1)
 
 #___ Instantiate Slack client
@@ -90,7 +90,7 @@ def organize_command(command, channel):
                                       as_user=True)
 
     replies = []
-    print reactions
+    print(reactions)
 
     if (len(reactions) == 0):
         return;
@@ -114,11 +114,11 @@ def organize_command(command, channel):
     for i in range(len(replies)):
         userInfo = slack_client.api_call("users.info", user=replies[i], as_user=True)
         replies[i] = userInfo['user']['name']
-    print replies
+    print(replies)
 
 
     groups = formGroups(replies);
-    print groups
+    print(groups)
 
 
     sendFinalMessage(channel,groups)
@@ -134,7 +134,7 @@ def handle_command(command, channel):
     if command.startswith(COMMAND_ORGANIZE):
         organize_command(command,channel)
 
-    print "Done"
+    print("Done")
 
 def parse_slack_output(slack_rtm_output):
     """
