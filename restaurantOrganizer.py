@@ -9,14 +9,18 @@ import random
 import sys
 import argparse
 
-MAX_GROUP_SIZE = 10      # Maximum group size, if participants > max group size, several groups will be created
-WAITING_TIME_MIN = 10    # Waiting time between question and answers : the time we let the users to answer the question
 
 
-#___ Instantiate Slack client
 parser = argparse.ArgumentParser(description = 'Restaurant bot!')
 parser.add_argument('slackbot_token', type=str, help='An ID for the slackbot')
+parser.add_argument('--waiting_time', type=int, default=10, help='Time to let people answer before closing reservations')
+parser.add_argument('--group_size', type=int, default=10, help='Maximum group size, if participants > max group size, several groups will be created')
 args = parser.parse_args()
+
+MAX_GROUP_SIZE = args.group_size  
+WAITING_TIME_MIN =  args.waiting_time
+
+#___ Instantiate Slack client
 BOT_NAME = slack_client = SlackClient(args.slackbot_token)
 def get_botID():
     api_call = slack_client.api_call("users.list")
