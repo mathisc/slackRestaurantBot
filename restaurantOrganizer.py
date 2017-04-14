@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
@@ -7,19 +7,17 @@ from slackclient import SlackClient
 import json
 import random
 import sys
+import argparse
 
 MAX_GROUP_SIZE = 10      # Maximum group size, if participants > max group size, several groups will be created
 WAITING_TIME_MIN = 10    # Waiting time between question and answers : the time we let the users to answer the question
 
-#___ Check environment variables
-try :
-    os.environ['SLACK_BOT_TOKEN']
-except KeyError:
-    print("SLACK_BOT_TOKEN is undefined")
-    sys.exit(1)
 
 #___ Instantiate Slack client
-BOT_NAME = slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+parser = argparse.ArgumentParser(description = 'Restaurant bot!')
+parser.add_argument('slackbot_token', type=str, help='An ID for the slackbot')
+args = parser.parse_args()
+BOT_NAME = slack_client = SlackClient(args.slackbot_token)
 def get_botID():
     api_call = slack_client.api_call("users.list")
     if api_call.get('ok'):
@@ -155,7 +153,6 @@ def parse_slack_output(slack_rtm_output):
 
 #___ Main
 if __name__ == "__main__":
-    #organize_command(None,None)
     READ_WEBSOCKET_DELAY = 1 # 1 second delay between reading from firehose
     if slack_client.rtm_connect():
         print("restaurant-organizer connected and running!")
