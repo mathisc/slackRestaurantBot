@@ -23,7 +23,7 @@ SLACK_CLIENT ,BOT_ID ,AT_BOT, AT_CHAN = get_slackConstants(SLACKBOT_TOKEN, "pizz
 #___ Functions
 def parseChoices():
     choices = [ ]
-    inputFile = os.join(os.getcwd(),"pizzaChoices.txt")
+    inputFile = os.path.join(os.getcwd(),"pizzaChoices.txt")
     f = open(inputFile,'r')
     lines = f.readlines()
     f.close()
