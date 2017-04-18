@@ -19,11 +19,13 @@ SLACKBOT_TOKEN = args.slackbot_token
 WAITING_TIME_MIN =  args.waiting_time
 COMMAND_WORD = "organize"
 SLACK_CLIENT ,BOT_ID ,AT_BOT, AT_CHAN = get_slackConstants(SLACKBOT_TOKEN, "pizza-organizer")
+print "coucou"
+print os.getcwd()
 
 #___ Functions
 def parseChoices():
     choices = [ ]
-    inputFile = "pizzaChoices.txt"
+    inputFile = os.join(os.getcwd(),"pizzaChoices.txt")
     f = open(inputFile,'r')
     lines = f.readlines()
     f.close()
