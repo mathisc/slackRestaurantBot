@@ -27,7 +27,7 @@ def parseChoices():
     f = open(inputFile,'r')
     lines = f.readlines()
     f.close()
-    for i in range(len(lines)/4):
+    for i in range(len(lines)//4):
         name = lines[4*i].rstrip('\r\n')
         ingredients = lines[4*i + 1].rstrip('\r\n')
         price =lines[4*i + 2].rstrip('\r\n')
