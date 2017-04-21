@@ -24,7 +24,6 @@ SLACK_CLIENT ,BOT_ID ,AT_BOT, AT_CHAN = get_slackConstants(SLACKBOT_TOKEN, "pizz
 def parseChoices():
     choices = [ ]
     inputFile = os.path.join(os.path.dirname(os.path.abspath(__file__)),"pizzaChoices.txt")
-    print inputFile
     f = open(inputFile,'r')
     lines = f.readlines()
     f.close()
