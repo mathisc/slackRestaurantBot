@@ -33,7 +33,7 @@ def sendReservationMessage(channel):
 def formGroups(replies):
     nBins = (len(replies) / MAX_GROUP_SIZE) + 1
     sizeBinsMin = len(replies)/nBins
-    groups = [[] for i in xrange(nBins)]
+    groups = [[] for i in list(range(nBins))]
 
     for bin in range(nBins-1) :
         for i in range(sizeBinsMin):
