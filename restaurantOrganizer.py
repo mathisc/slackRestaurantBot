@@ -3,6 +3,7 @@
 
 import argparse
 from commonTools import *
+import collections
 import os
 import time
 from slackclient import SlackClient
@@ -22,13 +23,45 @@ WAITING_TIME_MIN =  args.waiting_time
 COMMAND_WORD = "organize"
 SLACK_CLIENT ,BOT_ID ,AT_BOT, AT_CHAN = get_slackConstants(SLACKBOT_TOKEN, "restaurant-organizer")
 
+#___ Types
+ReservationDescription = collections.namedtuple('ReservationDescription', ['message', 'max_wait_time'])
 
 #___ Functions
-def sendReservationMessage(channel):
+
+
+def parse_invoke_command(invoke_command):
+    command_tokens = invoke_command.split(' ')
+
+    # Check delay to wait for participants
+    delay_set = True
+    max_wait_time = WAITING_TIME_MIN
+    within_index = -1
+    try:
+        within_index = command_tokens.index('within')
+    except ValueError:
+        delay_set = False
+    if delay_set and len(command_tokens) > (within_index + 1):
+        try:
+            max_wait_time = int(command_tokens[within_index + 1])
+        except ValueError:
+            max_wait_time = WAITING_TIME_MIN
+
+    # I know Emeric will try to wait for over 9000 minutes (or negative delay).
+    max_wait_time = min(max_wait_time, 40)
+    max_wait_time = max(max_wait_time, 5)
+
+    return max_wait_time
+
+
+def sendReservationMessage(channel, invoke_command):
+
+    # Check if the invoker precised a maximum time to wait for participants
+    max_wait_time = parse_invoke_command(invoke_command)
+
     response = AT_CHAN
-    response += "Up for some crazy restaurant? React to this post during the next " + str(WAITING_TIME_MIN) + " minutes and I'll handle (almost) everything."
+    response += "Up for some crazy restaurant? React to this post during the next " + str(max_wait_time) + " minutes and I'll handle (almost) everything."
     message = SLACK_CLIENT.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
-    return message
+    return ReservationDescription(message, max_wait_time)
 
 def formGroups(replies):
     nBins = int(len(replies) / MAX_GROUP_SIZE) + 1
@@ -64,11 +97,13 @@ def sendFinalMessage(channel, groups):
 
     SLACK_CLIENT.api_call("chat.postMessage", channel=channel, text=txt, as_user=True)
 
-def restaurantCommand(channel):
+def restaurantCommand(channel, invoke_command):
 
-    messageInit = sendReservationMessage(channel)
+    msg_desc = sendReservationMessage(channel, invoke_command)
+    messageInit = msg_desc.message
+    wait_time = msg_desc.max_wait_time
 
-    time.sleep(WAITING_TIME_MIN*60)
+    time.sleep(wait_time*60)
 
     reactions = SLACK_CLIENT.api_call("reactions.get",
                                       channel=channel,
@@ -111,7 +146,7 @@ if __name__ == "__main__":
             command, channel = parse_slack_output(SLACK_CLIENT.rtm_read(), AT_BOT)
             if command and channel:
                 if command.startswith(COMMAND_WORD):
-                    restaurantCommand(channel)
+                    restaurantCommand(channel, command)
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack token or bot ID?")
