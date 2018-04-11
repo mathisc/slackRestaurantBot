@@ -59,7 +59,7 @@ def sendReservationMessage(channel, invoke_command):
     max_wait_time = parse_invoke_command(invoke_command)
 
     response = AT_CHAN
-    response += "Up for some crazy restaurant? React to this post during the next " + str(WAITING_TIME_MIN) + " minutes and I'll handle (almost) everything."
+    response += "Up for some crazy restaurant? React to this post during the next " + str(max_wait_time) + " minutes and I'll handle (almost) everything."
     message = SLACK_CLIENT.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
     return ReservationDescription(message, max_wait_time)
 
